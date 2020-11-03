@@ -1,6 +1,6 @@
 name: "KinD Cluster"
 description: "Create a KinD (Kubernetes IN Docker) cluster"
-author: "Container Tools folks"
+author: "Container Tools developers"
 branding:
   color: blue
   icon: box
