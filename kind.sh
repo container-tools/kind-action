@@ -17,7 +17,7 @@ set -o nounset
 set -o pipefail
 
 DEFAULT_KIND_VERSION=v0.9.0
-DEFAULT_CLUSTER_NAME=chart-testing
+DEFAULT_CLUSTER_NAME=kind
 KUBECTL_VERSION=v1.18.6
 
 show_help() {
@@ -28,7 +28,7 @@ Usage: $(basename "$0") <options>
     -v, --version                           The kind version to use (default: $DEFAULT_KIND_VERSION)"
     -c, --config                            The path to the kind config file"
     -i, --node-image                        The Docker image for the cluster nodes"
-    -n, --cluster-name                      The name of the cluster to create (default: chart-testing)"
+    -n, --cluster-name                      The name of the cluster to create (default: $DEFAULT_CLUSTER_NAME)"
     -w, --wait                              The duration to wait for the control plane to become ready (default: 60s)"
     -l, --log-level                         The log level for kind [panic, fatal, error, warning, info, debug, trace] (default: warning)
 

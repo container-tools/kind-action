@@ -18,7 +18,7 @@ For more information on inputs, see the [API Documentation](https://developer.gi
 - `version`: The KinD version to use (default: `v0.9.0`)
 - `config`: The path to the KinD config file
 - `node_image`: The Docker image for the cluster nodes
-- `cluster_name`: The name of the cluster to create (default: `chart-testing`)
+- `cluster_name`: The name of the cluster to create (default: `kind`)
 - `wait`: The duration to wait for the control plane to become ready (default: `60s`)
 - `log_level`: The log level for KinD
 - `registry`: Configures a registry on localhost:5000 to be used with KinD (default: `false`)
