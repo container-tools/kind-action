@@ -19,6 +19,7 @@ set -o pipefail
 DEFAULT_REGISTRY_IMAGE=registry:2
 DEFAULT_REGISTRY_NAME=kind-registry
 DEFAULT_REGISTRY_PORT=5000
+DEFAULT_CLUSTER_NAME=kind
 
 show_help() {
 cat << EOF
@@ -28,6 +29,8 @@ Usage: $(basename "$0") <options>
         --registry-image                    The registry image to use (default: registry:2)
         --registry-name                     The registry name to use
         --registry-port                     The local port used to bind the registry
+        -n, --cluster-name                  The name of the cluster to create (default: $DEFAULT_CLUSTER_NAME)"
+        --document                          Document the local registry
 
 EOF
 }
@@ -36,12 +39,19 @@ main() {
     local registry_image="$DEFAULT_REGISTRY_IMAGE"
     local registry_name="$DEFAULT_REGISTRY_NAME"
     local registry_port="$DEFAULT_REGISTRY_PORT"
+    local cluster_name="$DEFAULT_CLUSTER_NAME"
+    local document=false
 
     parse_command_line "$@"
-
-    create_registry
-    connect_registry
-    create_kind_config
+    
+    if [[ "$document" = "false" ]]
+    then
+        create_registry
+        connect_registry
+        create_kind_config
+    else
+        document
+    fi
 
 }
 
@@ -82,6 +92,26 @@ parse_command_line() {
                     exit 1
                 fi
                 ;;
+            -n|--cluster-name)
+                if [[ -n "${2:-}" ]]; then
+                    cluster_name="$2"
+                    shift
+                else
+                    echo "ERROR: '-n|--cluster-name' cannot be empty." >&2
+                    show_help
+                    exit 1
+                fi
+                ;;
+            --document)
+                if [[ -n "${2:-}" ]]; then
+                    document="$2"
+                    shift
+                else
+                    echo "ERROR: '--document' cannot be empty." >&2
+                    show_help
+                    exit 1
+                fi
+                ;;
             *)
                 break
                 ;;
@@ -94,8 +124,20 @@ parse_command_line() {
 create_registry() {
     echo "Creating registry \"$registry_name\" on port $registry_port from image \"$registry_image\"..."
     docker run -d --restart=always -p "${registry_port}:5000" --name "${registry_name}" $registry_image > /dev/null
+    
+    # Adding registry to /etc/hosts
+    echo "127.0.0.1 $registry_name" | sudo tee --append /etc/hosts
+
+    # Setting registry as insecure
+    patch=".\"insecure-registries\" = \"${registry_name}:${registry_port}\""
+    sudo jq "$patch" /etc/docker/daemon.json > /tmp/daemon.json.tmp && sudo mv /tmp/daemon.json.tmp /etc/docker/daemon.json
+    cat /etc/docker/daemon.json
+
+    # Restart docker daemon
+    sudo service docker restart
+
     # Exporting the registry location for subsequent jobs
-    echo "KIND_REGISTRY=localhost:${registry_port}" >> $GITHUB_ENV
+    echo "KIND_REGISTRY=${registry_name}:${registry_port}" >> $GITHUB_ENV
 }
 
 connect_registry() {
@@ -111,10 +153,26 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:
 - |-
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:${registry_port}"]
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."${registry_name}:${registry_port}"]
     endpoint = ["http://${registry_name}:${registry_port}"]
 EOF
     sudo chmod a+r /etc/kind-registry/config.yaml
+}
+
+document() {
+    # Document the local registry
+    # https://github.com/kubernetes/enhancements/tree/master/keps/sig-cluster-lifecycle/generic/1755-communicating-a-local-registry
+    cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: local-registry-hosting
+  namespace: kube-public
+data:
+  localRegistryHosting.v1: |
+    host: "${registry_name}:${registry_port}"
+    help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
+EOF
 }
 
 main "$@"

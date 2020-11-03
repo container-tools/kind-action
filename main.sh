@@ -57,6 +57,10 @@ main() {
     fi
 
     "$SCRIPT_DIR/kind.sh" "${args[@]}"
+
+    if [[ -n "${INPUT_REGISTRY:-}" ]] && [[ "${INPUT_REGISTRY,,}" = "true" ]]; then
+        "$SCRIPT_DIR/registry.sh" "--document" "true" "${args[@]}"
+    fi
 }
 
 main
