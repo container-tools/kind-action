@@ -1,0 +1,25 @@
+name: "KinD Cluster"
+description: "Create a KinD (Kubernetes IN Docker) cluster"
+author: "Container Tools folks"
+branding:
+  color: blue
+  icon: box
+inputs:
+  version:
+    description: "The KinD version to use (default: v0.8.1)"
+  config:
+    description: "The path to the KinD config file"
+  node_image:
+    description: "The Docker image for the cluster nodes"
+  cluster_name:
+    description: "The name of the cluster to create (default: chart-testing)"
+  wait:
+    description: "The duration to wait for the control plane to become ready (default: 60s)"
+  log_level:
+    description: "The log level for KinD"
+  registry:
+    description: "Configures a registry on localhost:5000 to be used with KinD (default: false)"
+runs:
+  using: "node12"
+  main: "main.js"
+  post: "cleanup.js"
