@@ -1,8 +1,10 @@
-# KinD Action
+# Kubernetes KinD Action
 
 [![](https://github.com/container-tools/kind-action/workflows/Test/badge.svg?branch=main)](https://github.com/container-tools/kind-action/actions)
 
-A GitHub Action for Kubernetes IN Docker - local clusters for testing Kubernetes using [kubernetes-sigs/kind](https://kind.sigs.k8s.io/).
+A GitHub Action for starting a Kubernetes cluster using [KinD](https://kind.sigs.k8s.io/).
+
+This action provides an optional registry on `localhost:5000` that can be used to publish and deploy container images into KinD.
 
 ## Usage
 
@@ -38,9 +40,15 @@ jobs:
     steps:
       - name: Create k8s KinD Cluster
         uses: container-tools/kind-action@v1.0.0
+        with:
+          registry: true
 ```
 
 This uses [@container-tools/kind-action](https://www.github.com/container-tools/kind-action) GitHub Action to spin up a [KinD](https://kind.sigs.k8s.io/) Kubernetes cluster on every Pull Request.
+
+The `registry: true` option also enables a container registry on `localhost:5000` on both the host and the cluster.
+The registry address is stored in the `KIND_REGISTRY` environment variable, also for the subsequent steps.
+
 
 ## Credits
 

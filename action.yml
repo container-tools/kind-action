@@ -1,9 +1,9 @@
-name: "KinD Cluster"
-description: "Create a KinD (Kubernetes IN Docker) cluster"
+name: "Kubernetes KinD Cluster"
+description: "Create a KinD (Kubernetes in Docker) cluster with an optional container image registry"
 author: "Container Tools developers"
 branding:
   color: blue
-  icon: box
+  icon: cloud
 inputs:
   version:
     description: "The KinD version to use (default: v0.9.0)"
