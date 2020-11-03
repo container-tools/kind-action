@@ -6,7 +6,7 @@ branding:
   icon: box
 inputs:
   version:
-    description: "The KinD version to use (default: v0.8.1)"
+    description: "The KinD version to use (default: v0.9.0)"
   config:
     description: "The path to the KinD config file"
   node_image:

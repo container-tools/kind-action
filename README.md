@@ -15,7 +15,7 @@ For more information, reference the GitHub Help Documentation for [Creating a wo
 
 For more information on inputs, see the [API Documentation](https://developer.github.com/v3/repos/releases/#input)
 
-- `version`: The KinD version to use (default: `v0.8.1`)
+- `version`: The KinD version to use (default: `v0.9.0`)
 - `config`: The path to the KinD config file
 - `node_image`: The Docker image for the cluster nodes
 - `cluster_name`: The name of the cluster to create (default: `chart-testing`)

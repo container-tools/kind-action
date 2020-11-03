@@ -16,7 +16,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-DEFAULT_KIND_VERSION=v0.8.1
+DEFAULT_KIND_VERSION=v0.9.0
 DEFAULT_CLUSTER_NAME=chart-testing
 KUBECTL_VERSION=v1.18.6
 
@@ -25,7 +25,7 @@ cat << EOF
 Usage: $(basename "$0") <options>
 
     -h, --help                              Display help
-    -v, --version                           The kind version to use (default: v0.8.1)"
+    -v, --version                           The kind version to use (default: $DEFAULT_KIND_VERSION)"
     -c, --config                            The path to the kind config file"
     -i, --node-image                        The Docker image for the cluster nodes"
     -n, --cluster-name                      The name of the cluster to create (default: chart-testing)"
