@@ -129,9 +129,8 @@ create_registry() {
     echo "127.0.0.1 $registry_name" | sudo tee --append /etc/hosts
 
     # Setting registry as insecure
-    patch=".\"insecure-registries\" = \"${registry_name}:${registry_port}\""
+    patch=".\"insecure-registries\" = [\"${registry_name}:${registry_port}\""]
     sudo jq "$patch" /etc/docker/daemon.json > /tmp/daemon.json.tmp && sudo mv /tmp/daemon.json.tmp /etc/docker/daemon.json
-    cat /etc/docker/daemon.json
 
     # Restart docker daemon
     sudo service docker restart
