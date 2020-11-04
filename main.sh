@@ -46,7 +46,7 @@ main() {
     fi
 
 
-    if [[ -n "${INPUT_REGISTRY:-}" ]] && [[ "${INPUT_REGISTRY,,}" = "true" ]]; then
+    if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "${INPUT_REGISTRY,,}" = "true" ]]; then
         "$SCRIPT_DIR/registry.sh" "${args[@]}"
 
         if [[ -n "${INPUT_CONFIG:-}" ]]; then
@@ -58,7 +58,7 @@ main() {
 
     "$SCRIPT_DIR/kind.sh" "${args[@]}"
 
-    if [[ -n "${INPUT_REGISTRY:-}" ]] && [[ "${INPUT_REGISTRY,,}" = "true" ]]; then
+    if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "${INPUT_REGISTRY,,}" = "true" ]]; then
         "$SCRIPT_DIR/registry.sh" "--document" "true" "${args[@]}"
     fi
 }

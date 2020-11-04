@@ -45,6 +45,36 @@ jobs:
           kubectl cluster-info
           kubectl get storageclass standard
 
+  test-without-registry:
+    strategy:
+      matrix:
+        version:
+        - v0.9.0
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Create kind cluster with custom name
+        uses: ./
+        with:
+          version: "${{ matrix.version }}"
+          cluster_name: "custom-name"
+          registry: false
+
+      - name: Test
+        run: |
+          kubectl cluster-info
+          kubectl get storageclass standard
+
+          registry_id=$(docker ps --filter "name=kind-registry" --format "{{.ID}}")
+          if [[ -n "$registry_id" ]]; then
+            echo "Registry present"
+            exit 1
+          fi
+
+
+
   test-with-registry:
     strategy:
       matrix:
@@ -60,7 +90,6 @@ jobs:
         uses: ./
         with:
           version: "${{ matrix.version }}"
-          registry: true
 
       - name: Test
         run: |

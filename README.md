@@ -1,10 +1,10 @@
-# Kubernetes KinD Action
+# Kubernetes KinD Cluster Action
 
 [![](https://github.com/container-tools/kind-action/workflows/Test/badge.svg?branch=main)](https://github.com/container-tools/kind-action/actions)
 
-A GitHub Action for starting a Kubernetes cluster using [KinD](https://kind.sigs.k8s.io/).
+A GitHub Action for starting a Kubernetes cluster with a local registry using [KinD](https://kind.sigs.k8s.io/).
 
-This action provides an optional insecure registry on `kind-registry:5000` that can be used to publish and deploy container images into KinD.
+This action provides an insecure registry on `kind-registry:5000` by default: it can be used to publish and deploy container images into KinD.
 
 ## Usage
 
@@ -23,7 +23,7 @@ For more information on inputs, see the [API Documentation](https://developer.gi
 - `cluster_name`: The name of the cluster to create (default: `kind`)
 - `wait`: The duration to wait for the control plane to become ready (default: `60s`)
 - `log_level`: The log level for KinD
-- `registry`: Configures an insecure registry on `kind-registry:5000` to be used with KinD (default: `false`)
+- `registry`: Configures an insecure registry on `kind-registry:5000` to be used with KinD (default: `true`)
 
 ### Example Workflow
 
@@ -38,17 +38,14 @@ jobs:
   create-cluster:
     runs-on: ubuntu-latest
     steps:
-      - name: Create k8s KinD Cluster
-        uses: container-tools/kind-action@v1.0.0
-        with:
-          registry: true
+      - name: Kubernetes KinD Cluster
+        uses: container-tools/kind-action@v1
 ```
 
 This uses [@container-tools/kind-action](https://www.github.com/container-tools/kind-action) GitHub Action to spin up a [KinD](https://kind.sigs.k8s.io/) Kubernetes cluster on every Pull Request.
 
-The `registry: true` option also enables a container registry on `kind-registry:5000` on both the host and the cluster.
+A container registry will be created with address `kind-registry:5000` on both the host and the cluster.
 The registry address is stored in the `KIND_REGISTRY` environment variable, also for the subsequent steps.
-
 
 ## Credits
 
