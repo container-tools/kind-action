@@ -45,6 +45,17 @@ main() {
         args+=(--log-level "${INPUT_LOG_LEVEL}")
     fi
 
+    if [[ -n "${INPUT_KNATIVE_SERVING:-}" ]]; then
+        args+=(--knative-serving "${INPUT_KNATIVE_SERVING}")
+    fi
+
+    if [[ -n "${INPUT_KNATIVE_KOURIER:-}" ]]; then
+        args+=(--knative-kourier "${INPUT_KNATIVE_KOURIER}")
+    fi
+
+    if [[ -n "${INPUT_KNATIVE_EVENTING:-}" ]]; then
+        args+=(--knative-eventing "${INPUT_KNATIVE_EVENTING}")
+    fi
 
     if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "${INPUT_REGISTRY,,}" = "true" ]]; then
         "$SCRIPT_DIR/registry.sh" "${args[@]}"
@@ -61,6 +72,8 @@ main() {
     if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "${INPUT_REGISTRY,,}" = "true" ]]; then
         "$SCRIPT_DIR/registry.sh" "--document" "true" "${args[@]}"
     fi
+
+    "$SCRIPT_DIR/knative.sh" "${args[@]}"
 }
 
 main

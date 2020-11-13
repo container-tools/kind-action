@@ -2,7 +2,7 @@
 
 [![](https://github.com/container-tools/kind-action/workflows/Test/badge.svg?branch=main)](https://github.com/container-tools/kind-action/actions)
 
-A GitHub Action for starting a Kubernetes cluster with a local registry using [KinD](https://kind.sigs.k8s.io/).
+A GitHub Action for starting a Kubernetes cluster with a local registry and optional addons (Knative) using [KinD](https://kind.sigs.k8s.io/).
 
 This action provides an insecure registry on `kind-registry:5000` by default: it can be used to publish and deploy container images into KinD.
 
@@ -24,6 +24,9 @@ For more information on inputs, see the [API Documentation](https://developer.gi
 - `wait`: The duration to wait for the control plane to become ready (default: `60s`)
 - `log_level`: The log level for KinD
 - `registry`: Configures an insecure registry on `kind-registry:5000` to be used with KinD (default: `true`)
+- `knative_serving`: The version of Knative Serving to install on the Kind cluster (not installed by default - example: `v0.19.0`)
+- `knative_kourier`: The version of Knative Net Kourier to install on the Kind cluster (not installed by default - example: `v0.19.0`)
+- `knative_eventing`: The version of Knative Eventing to install on the Kind cluster (not installed by default - example: `v0.19.0`)
 
 ### Example Workflow
 
@@ -46,6 +49,29 @@ This uses [@container-tools/kind-action](https://www.github.com/container-tools/
 
 A container registry will be created with address `kind-registry:5000` on both the host and the cluster.
 The registry address is stored in the `KIND_REGISTRY` environment variable, also for the subsequent steps.
+
+### Configuring Addons
+
+Create a workflow (eg: `.github/workflows/create-cluster-with-addons.yml`):
+
+```yaml
+name: Create Cluster with Addons
+
+on: pull_request
+
+jobs:
+  create-cluster-with-addons:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kubernetes KinD Cluster
+        uses: container-tools/kind-action@v1
+        with:
+          knative_serving: v0.19.0
+          knative_kourier: v0.19.0
+          knative_eventing: v0.19.0
+```
+
+This will install Knative Serving, Eventing and a Kourier Ingress on your Kind cluster. To make Knative run on Kind, resource request and limits are removed from the original Knative descriptors.
 
 ## Credits
 
