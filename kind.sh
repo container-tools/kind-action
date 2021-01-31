@@ -18,7 +18,7 @@ set -o pipefail
 
 DEFAULT_KIND_VERSION=v0.9.0
 DEFAULT_CLUSTER_NAME=kind
-KUBECTL_VERSION=v1.18.6
+DEFAULT_KUBECTL_VERSION=v1.18.6
 
 show_help() {
 cat << EOF
@@ -26,6 +26,7 @@ Usage: $(basename "$0") <options>
 
     -h, --help                              Display help
     -v, --version                           The kind version to use (default: $DEFAULT_KIND_VERSION)"
+    -k, --kubectl-version                   The kubectl version to use (default: $DEFAULT_KUBECTL_VERSION)"
     -c, --config                            The path to the kind config file"
     -i, --node-image                        The Docker image for the cluster nodes"
     -n, --cluster-name                      The name of the cluster to create (default: $DEFAULT_CLUSTER_NAME)"
@@ -37,6 +38,7 @@ EOF
 
 main() {
     local version="$DEFAULT_KIND_VERSION"
+    local kubectl_version="$DEFAULT_KUBECTL_VERSION"
     local config=
     local node_image=
     local cluster_name="$DEFAULT_CLUSTER_NAME"
@@ -64,6 +66,16 @@ parse_command_line() {
                     shift
                 else
                     echo "ERROR: '-v|--version' cannot be empty." >&2
+                    show_help
+                    exit 1
+                fi
+                ;;
+            -k|--kubectl-version)
+                if [[ -n "${2:-}" ]]; then
+                    kubectl_version="$2"
+                    shift
+                else
+                    echo "ERROR: '-k|--kubectl-version' cannot be empty." >&2
                     show_help
                     exit 1
                 fi
@@ -136,7 +148,7 @@ install_kind() {
 
 install_kubectl() {
     echo 'Installing kubectl...'
-    curl -sSLO "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+    curl -sSLO "https://storage.googleapis.com/kubernetes-release/release/$kubectl_version/bin/linux/amd64/kubectl"
     chmod +x kubectl
     sudo mv kubectl /usr/local/bin/kubectl
 }
