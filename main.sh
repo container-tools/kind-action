@@ -19,42 +19,47 @@ set -o pipefail
 SCRIPT_DIR=$(dirname -- "$(readlink -f "${BASH_SOURCE[0]}" || realpath "${BASH_SOURCE[0]}")")
 
 main() {
-    args=()
+    args_kind=()
+    args_knative=()
 
     if [[ -n "${INPUT_VERSION:-}" ]]; then
-        args+=(--version "${INPUT_VERSION}")
+        args_kind+=(--version "${INPUT_VERSION}")
     fi
 
     if [[ -n "${INPUT_CONFIG:-}" ]]; then
-        args+=(--config "${INPUT_CONFIG}")
+        args_kind+=(--config "${INPUT_CONFIG}")
     fi
 
     if [[ -n "${INPUT_NODE_IMAGE:-}" ]]; then
-        args+=(--node-image "${INPUT_NODE_IMAGE}")
+        args_kind+=(--node-image "${INPUT_NODE_IMAGE}")
     fi
 
     if [[ -n "${INPUT_CLUSTER_NAME:-}" ]]; then
-        args+=(--cluster-name "${INPUT_CLUSTER_NAME}")
+        args_kind+=(--cluster-name "${INPUT_CLUSTER_NAME}")
     fi
 
     if [[ -n "${INPUT_WAIT:-}" ]]; then
-        args+=(--wait "${INPUT_WAIT}")
+        args_kind+=(--wait "${INPUT_WAIT}")
     fi
 
     if [[ -n "${INPUT_LOG_LEVEL:-}" ]]; then
-        args+=(--log-level "${INPUT_LOG_LEVEL}")
+        args_kind+=(--log-level "${INPUT_LOG_LEVEL}")
+    fi
+
+    if [[ -n "${INPUT_KUBECTL_VERSION:-}" ]]; then
+        args_kind+=(--kubectl-version "${INPUT_KUBECTL_VERSION}")
     fi
 
     if [[ -n "${INPUT_KNATIVE_SERVING:-}" ]]; then
-        args+=(--knative-serving "${INPUT_KNATIVE_SERVING}")
+        args_knative+=(--knative-serving "${INPUT_KNATIVE_SERVING}")
     fi
 
     if [[ -n "${INPUT_KNATIVE_KOURIER:-}" ]]; then
-        args+=(--knative-kourier "${INPUT_KNATIVE_KOURIER}")
+        args_knative+=(--knative-kourier "${INPUT_KNATIVE_KOURIER}")
     fi
 
     if [[ -n "${INPUT_KNATIVE_EVENTING:-}" ]]; then
-        args+=(--knative-eventing "${INPUT_KNATIVE_EVENTING}")
+        args_knative+=(--knative-eventing "${INPUT_KNATIVE_EVENTING}")
     fi
 
     if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "${INPUT_REGISTRY,,}" = "true" ]]; then
@@ -63,17 +68,17 @@ main() {
         if [[ -n "${INPUT_CONFIG:-}" ]]; then
             echo 'WARNING: when using the "config" option, you need to manually configure the registry in the provided configuration'
         else
-            args+=(--config "/etc/kind-registry/config.yaml")
+            args_kind+=(--config "/etc/kind-registry/config.yaml")
         fi
     fi
 
-    "$SCRIPT_DIR/kind.sh" "${args[@]}"
+    "$SCRIPT_DIR/kind.sh" "${args_kind[@]}"
 
     if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "${INPUT_REGISTRY,,}" = "true" ]]; then
         "$SCRIPT_DIR/registry.sh" "--document" "true" "${args[@]}"
     fi
 
-    "$SCRIPT_DIR/knative.sh" "${args[@]}"
+    "$SCRIPT_DIR/knative.sh" "${args_knative[@]}"
 }
 
 main
