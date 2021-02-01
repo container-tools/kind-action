@@ -16,9 +16,9 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-DEFAULT_KIND_VERSION=v0.9.0
+DEFAULT_KIND_VERSION=v0.10.0
 DEFAULT_CLUSTER_NAME=kind
-DEFAULT_KUBECTL_VERSION=v1.18.6
+DEFAULT_KUBECTL_VERSION=v1.20.0
 
 show_help() {
 cat << EOF
