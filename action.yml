@@ -6,7 +6,7 @@ branding:
   icon: cloud
 inputs:
   version:
-    description: "The KinD version to use (default: v0.9.0)"
+    description: "The KinD version to use (default: v0.10.0)"
   config:
     description: "The path to the KinD config file"
   node_image:
@@ -19,12 +19,14 @@ inputs:
     description: "The log level for KinD"
   registry:
     description: "Configures an insecure registry on kind-registry:5000 to be used with KinD (default: true)"
+  kubectl_version:
+    description: "The version of kubectl to use (default: v1.20.0)"
   knative_serving:
-    description: "The version of Knative Serving to install on the Kind cluster (not installed by default - example: v0.19.0)"
+    description: "The version of Knative Serving to install on the Kind cluster (not installed by default - example: v0.20.0)"
   knative_kourier:
-    description: "The version of Knative Net Kourier to install on the Kind cluster (not installed by default - example: v0.19.0)"
+    description: "The version of Knative Net Kourier to install on the Kind cluster (not installed by default - example: v0.20.0)"
   knative_eventing:
-    description: "The version of Knative Eventing to install on the Kind cluster (not installed by default - example: v0.19.0)"
+    description: "The version of Knative Eventing to install on the Kind cluster (not installed by default - example: v0.20.0)"
 runs:
   using: "node12"
   main: "main.js"
