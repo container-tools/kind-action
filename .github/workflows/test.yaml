@@ -141,7 +141,7 @@ jobs:
         kubectl get storageclass standard
 
         cat << EOF | kubectl apply -f -
-        apiVersion: messaging.knative.dev/v1beta1
+        apiVersion: messaging.knative.dev/v1
         kind: InMemoryChannel
         metadata:
           name: messages
