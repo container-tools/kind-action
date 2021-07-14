@@ -141,7 +141,13 @@ install_eventing() {
     sleep 5
     curl -L -s https://github.com/knative/eventing/releases/download/$eventing_version/eventing-core.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
     # Eventing channels
+    set +e
     curl -L -s https://github.com/knative/eventing/releases/download/$eventing_version/in-memory-channel.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
+    if [ $? -ne 0 ]; then
+        set -e
+        curl -L -s https://github.com/knative/eventing/releases/download/$eventing_version/in-memory-channel.yaml | kubectl apply -f -
+    fi
+    set -e
     # Eventing broker
     curl -L -s https://github.com/knative/eventing/releases/download/$eventing_version/mt-channel-broker.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
     echo "Waiting for resources to be initialized..."
