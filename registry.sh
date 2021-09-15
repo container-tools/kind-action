@@ -128,13 +128,6 @@ create_registry() {
     # Adding registry to /etc/hosts
     echo "127.0.0.1 $registry_name" | sudo tee --append /etc/hosts
 
-    # Setting registry as insecure
-    patch=".\"insecure-registries\" = [\"${registry_name}:${registry_port}\""]
-    sudo jq "$patch" /etc/docker/daemon.json > /tmp/daemon.json.tmp && sudo mv /tmp/daemon.json.tmp /etc/docker/daemon.json
-
-    # Restart docker daemon
-    sudo service docker restart
-
     # Exporting the registry location for subsequent jobs
     echo "KIND_REGISTRY=${registry_name}:${registry_port}" >> $GITHUB_ENV
 }
