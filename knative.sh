@@ -111,10 +111,14 @@ install_prerequisites() {
 install_serving() {
     # TODO find alternative to sleep
     echo "Installing Knative Serving $serving_version..."
-    kubectl apply --filename https://github.com/knative/serving/releases/download/$serving_version/serving-crds.yaml
+    base=https://github.com/knative/serving/releases/download/$serving_version
+    if [[ $serving_version = v1* ]]; then
+        base=https://github.com/knative/serving/releases/download/knative-$serving_version
+    fi
+    kubectl apply --filename $base/serving-crds.yaml
     echo "Waiting for resources to be initialized..."
     sleep 5
-    curl -L -s https://github.com/knative/serving/releases/download/$serving_version/serving-core.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
+    curl -L -s $base/serving-core.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
     echo "Waiting for resources to be initialized..."
     sleep 60
     kubectl get pod -n knative-serving
@@ -123,7 +127,11 @@ install_serving() {
 install_kourier() {
     # TODO find alternative to sleep
     echo "Installing Knative Net Kourier $kourier_version..."
-    kubectl apply --filename https://github.com/knative-sandbox/net-kourier/releases/download/$kourier_version/kourier.yaml
+    base=https://github.com/knative-sandbox/net-kourier/releases/download/$kourier_version
+    if [[ $serving_version = v1* ]]; then
+        base=https://github.com/knative-sandbox/net-kourier/releases/download/knative-$kourier_version
+    fi
+    kubectl apply --filename $base/kourier.yaml
     kubectl patch configmap/config-network \
       --namespace knative-serving \
       --type merge \
@@ -136,20 +144,24 @@ install_kourier() {
 install_eventing() {
     # TODO find alternative to sleep
     echo "Installing Knative Eventing $eventing_version..."
-    kubectl apply --filename https://github.com/knative/eventing/releases/download/$eventing_version/eventing-crds.yaml
+    base=https://github.com/knative/eventing/releases/download/$eventing_version
+    if [[ $serving_version = v1* ]]; then
+        base=https://github.com/knative/eventing/releases/download/knative-$eventing_version
+    fi
+    kubectl apply --filename $base/eventing-crds.yaml
     echo "Waiting for resources to be initialized..."
     sleep 5
-    curl -L -s https://github.com/knative/eventing/releases/download/$eventing_version/eventing-core.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
+    curl -L -s $base/eventing-core.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
     # Eventing channels
     set +e
-    curl -L -s https://github.com/knative/eventing/releases/download/$eventing_version/in-memory-channel.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
+    curl -L -s $base/in-memory-channel.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
     if [ $? -ne 0 ]; then
         set -e
-        curl -L -s https://github.com/knative/eventing/releases/download/$eventing_version/in-memory-channel.yaml | kubectl apply -f -
+        curl -L -s $base/in-memory-channel.yaml | kubectl apply -f -
     fi
     set -e
     # Eventing broker
-    curl -L -s https://github.com/knative/eventing/releases/download/$eventing_version/mt-channel-broker.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
+    curl -L -s $base/mt-channel-broker.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
     echo "Waiting for resources to be initialized..."
     sleep 30
     kubectl get pod -n knative-eventing
