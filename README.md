@@ -25,9 +25,9 @@ For more information on inputs, see the [API Documentation](https://developer.gi
 - `log_level`: The log level for KinD
 - `registry`: Configures an insecure registry on `kind-registry:5000` to be used with KinD (default: `true`)
 - `kubectl_version`: The kubectl version to use (default: `v1.21.1`)
-- `knative_serving`: The version of Knative Serving to install on the Kind cluster (not installed by default - example: `v0.24.0`)
-- `knative_kourier`: The version of Knative Net Kourier to install on the Kind cluster (not installed by default - example: `v0.24.0`)
-- `knative_eventing`: The version of Knative Eventing to install on the Kind cluster (not installed by default - example: `v0.24.0`)
+- `knative_serving`: The version of Knative Serving to install on the Kind cluster (not installed by default - example: `v1.0.0`)
+- `knative_kourier`: The version of Knative Net Kourier to install on the Kind cluster (not installed by default - example: `v1.0.0`)
+- `knative_eventing`: The version of Knative Eventing to install on the Kind cluster (not installed by default - example: `v1.0.0`)
 
 ### Example Workflow
 
@@ -67,9 +67,9 @@ jobs:
       - name: Kubernetes KinD Cluster
         uses: container-tools/kind-action@v1
         with:
-          knative_serving: v0.24.0
-          knative_kourier: v0.24.0
-          knative_eventing: v0.24.0
+          knative_serving: v1.0.0
+          knative_kourier: v1.0.0
+          knative_eventing: v1.0.0
 ```
 
 This will install Knative Serving, Eventing and a Kourier Ingress on your Kind cluster. To make Knative run on Kind, resource request and limits are removed from the original Knative descriptors.

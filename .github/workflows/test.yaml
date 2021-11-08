@@ -123,6 +123,11 @@ jobs:
           fi
 
   test-knative:
+    strategy:
+      matrix:
+        knative_version:
+        - v0.24.0
+        - v1.0.0
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -131,9 +136,9 @@ jobs:
     - name: Create kind cluster
       uses: ./
       with:
-        knative_serving: v0.24.0
-        knative_kourier: v0.24.0
-        knative_eventing: v0.24.0
+        knative_serving: "${{ matrix.knative_version }}"
+        knative_kourier: "${{ matrix.knative_version }}"
+        knative_eventing: "${{ matrix.knative_version }}"
 
     - name: Test
       run: |
