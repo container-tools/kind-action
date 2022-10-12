@@ -28,6 +28,6 @@ inputs:
   knative_eventing:
     description: "The version of Knative Eventing to install on the Kind cluster (not installed by default - example: v1.0.0)"
 runs:
-  using: "node12"
+  using: "node16"
   main: "main.js"
   post: "cleanup.js"
