@@ -141,16 +141,32 @@ parse_command_line() {
 
 install_kind() {
     echo 'Installing kind...'
-    curl -sSLo kind "https://github.com/kubernetes-sigs/kind/releases/download/$version/kind-linux-amd64"
+    if [ "$RUNNER_OS" == "macOS" ]; then
+        # for Intel Macs
+        [ $(uname -m) = x86_64 ] && curl -sSLo kind "https://kind.sigs.k8s.io/dl/$version/kind-darwin-amd64"
+        # for M1 / ARM Macs
+        [ $(uname -m) = arm64 ] && curl -sSLo kind "https://kind.sigs.k8s.io/dl/$version/kind-darwin-arm64"
+    else
+        curl -sSLo kind "https://github.com/kubernetes-sigs/kind/releases/download/$version/kind-linux-amd64"
+    fi
     chmod +x kind
     sudo mv kind /usr/local/bin/kind
+    kind version
 }
 
 install_kubectl() {
     echo 'Installing kubectl...'
-    curl -sSLO "https://storage.googleapis.com/kubernetes-release/release/$kubectl_version/bin/linux/amd64/kubectl"
+    if [ "$RUNNER_OS" == "macOS" ]; then
+        # for Intel Macs
+        [ $(uname -m) = x86_64 ] && curl -sSLo kubectl "https://dl.k8s.io/release/$kubectl_version/bin/darwin/amd64/kubectl"
+        # for M1 / ARM Macs
+        [ $(uname -m) = arm64 ] && curl -sSLo kubectl "https://dl.k8s.io/release/$kubectl_version/bin/darwin/arm64/kubectl"
+    else
+        curl -sSLO "https://storage.googleapis.com/kubernetes-release/release/$kubectl_version/bin/linux/amd64/kubectl"
+    fi
     chmod +x kubectl
     sudo mv kubectl /usr/local/bin/kubectl
+    kubectl version --client --output=yaml
 }
 
 create_kind_cluster() {
