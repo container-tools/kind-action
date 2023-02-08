@@ -105,7 +105,9 @@ parse_command_line() {
 
 install_prerequisites() {
     echo "Installing yq for patching Knative resources..."
-    sudo pip install yq
+    wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+    chmod +x /usr/local/bin/yq
+    yq --version
 }
 
 install_serving() {
@@ -118,7 +120,7 @@ install_serving() {
     kubectl apply --filename $base/serving-crds.yaml
     echo "Waiting for resources to be initialized..."
     sleep 5
-    curl -L -s $base/serving-core.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
+    curl -L -s $base/serving-core.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' | yq 'del(.metadata.annotations."knative.dev/example-checksum")' | kubectl apply -f -
     echo "Waiting for resources to be initialized..."
     sleep 60
     kubectl get pod -n knative-serving
@@ -151,17 +153,17 @@ install_eventing() {
     kubectl apply --filename $base/eventing-crds.yaml
     echo "Waiting for resources to be initialized..."
     sleep 5
-    curl -L -s $base/eventing-core.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
+    curl -L -s $base/eventing-core.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' | yq 'del(.metadata.annotations."knative.dev/example-checksum")' | kubectl apply -f -
     # Eventing channels
     set +e
-    curl -L -s $base/in-memory-channel.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
+    curl -L -s $base/in-memory-channel.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' | yq 'del(.metadata.annotations."knative.dev/example-checksum")' | kubectl apply -f -
     if [ $? -ne 0 ]; then
         set -e
         curl -L -s $base/in-memory-channel.yaml | kubectl apply -f -
     fi
     set -e
     # Eventing broker
-    curl -L -s $base/mt-channel-broker.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' -y | yq 'del(.metadata.annotations."knative.dev/example-checksum")' -y | kubectl apply -f -
+    curl -L -s $base/mt-channel-broker.yaml | yq 'del(.spec.template.spec.containers[]?.resources)' | yq 'del(.metadata.annotations."knative.dev/example-checksum")' | kubectl apply -f -
     echo "Waiting for resources to be initialized..."
     sleep 30
     kubectl get pod -n knative-eventing
