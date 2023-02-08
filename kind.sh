@@ -49,6 +49,7 @@ main() {
 
     install_kind
     install_kubectl
+    install_docker
     create_kind_cluster
 
 }
@@ -167,6 +168,14 @@ install_kubectl() {
     chmod +x kubectl
     sudo mv kubectl /usr/local/bin/kubectl
     kubectl version --client --output=yaml
+}
+
+install_docker() {
+    if [ "$RUNNER_OS" == "macOS" ] && ! [ -x "$(command -v docker)" ]; then
+        echo 'Installing docker...'
+        brew install docker colima
+        colima start
+    fi
 }
 
 create_kind_cluster() {

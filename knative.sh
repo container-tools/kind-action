@@ -105,8 +105,12 @@ parse_command_line() {
 
 install_prerequisites() {
     echo "Installing yq for patching Knative resources..."
-    wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
-    chmod +x /usr/local/bin/yq
+    if [ "$RUNNER_OS" == "macOS" ]; then
+         brew install yq
+    else
+        wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+        chmod +x /usr/local/bin/yq
+    fi
     yq --version
 }
 
