@@ -63,7 +63,12 @@ main() {
     fi
 
     if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "${INPUT_REGISTRY,,}" = "true" ]]; then
-        "$SCRIPT_DIR/registry.sh" "${args[@]}"
+        if [[ ${args:+exist} == "exist" ]] && [[ ${#args[@]} -gt 0 ]]; then
+            "$SCRIPT_DIR/registry.sh" "${args[@]}"
+        else
+            "$SCRIPT_DIR/registry.sh"
+        fi
+        
 
         if [[ -n "${INPUT_CONFIG:-}" ]]; then
             echo 'WARNING: when using the "config" option, you need to manually configure the registry in the provided configuration'
@@ -71,14 +76,24 @@ main() {
             args_kind+=(--config "/etc/kind-registry/config.yaml")
         fi
     fi
-
-    "$SCRIPT_DIR/kind.sh" "${args_kind[@]}"
-
-    if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "${INPUT_REGISTRY,,}" = "true" ]]; then
-        "$SCRIPT_DIR/registry.sh" "--document" "true" "${args[@]}"
+    if [[ ${#args_kind[@]} -gt 0 ]]; then
+        "$SCRIPT_DIR/kind.sh" "${args_kind[@]}"
+    else
+        "$SCRIPT_DIR/kind.sh"
     fi
 
-    "$SCRIPT_DIR/knative.sh" "${args_knative[@]}"
+    if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "${INPUT_REGISTRY,,}" = "true" ]]; then
+        if [[ ${args:+exist} == "exist" ]] && [[ ${#args[@]} -gt 0 ]]; then
+            "$SCRIPT_DIR/registry.sh" "--document" "true" "${args[@]}"
+        else
+            "$SCRIPT_DIR/registry.sh" "--document" "true"
+        fi
+    fi
+    if [[ ${#args_knative[@]} -gt 0 ]]; then
+        "$SCRIPT_DIR/knative.sh" "${args_knative[@]}"
+    else
+        "$SCRIPT_DIR/knative.sh"
+    fi
 }
 
 main
