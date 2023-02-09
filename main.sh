@@ -62,7 +62,7 @@ main() {
         args_knative+=(--knative-eventing "${INPUT_KNATIVE_EVENTING}")
     fi
 
-    if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "${INPUT_REGISTRY,,}" = "true" ]]; then
+    if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "$(echo ${INPUT_REGISTRY} | tr '[:upper:]' '[:lower:]')" = "true" ]]; then
         if [[ ${args:+exist} == "exist" ]] && [[ ${#args[@]} -gt 0 ]]; then
             "$SCRIPT_DIR/registry.sh" "${args[@]}"
         else
@@ -82,7 +82,7 @@ main() {
         "$SCRIPT_DIR/kind.sh"
     fi
 
-    if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "${INPUT_REGISTRY,,}" = "true" ]]; then
+    if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "$(echo ${INPUT_REGISTRY} | tr '[:upper:]' '[:lower:]')" = "true" ]]; then
         if [[ ${args:+exist} == "exist" ]] && [[ ${#args[@]} -gt 0 ]]; then
             "$SCRIPT_DIR/registry.sh" "--document" "true" "${args[@]}"
         else

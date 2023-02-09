@@ -46,6 +46,7 @@ main() {
     
     if [[ "$document" = "false" ]]
     then
+        install_docker
         create_registry
         connect_registry
         create_kind_config
@@ -121,16 +122,20 @@ parse_command_line() {
     done
 }
 
+install_docker() {
+    if [ "$RUNNER_OS" == "macOS" ] && ! [ -x "$(command -v docker)" ]; then
+        echo 'Installing docker...'
+        brew install docker colima
+        colima start
+    fi
+}
+
 create_registry() {
     echo "Creating registry \"$registry_name\" on port $registry_port from image \"$registry_image\"..."
-    if [ "$RUNNER_OS" == "macOS" ] && ! [ -x "$(command -v docker)" ]; then
-         brew install docker colima
-         colima start
-    fi
     docker run -d --restart=always -p "${registry_port}:5000" --name "${registry_name}" $registry_image > /dev/null
     
     # Adding registry to /etc/hosts
-    sudo -- bash -c 'echo "127.0.0.1 $registry_name" >> /etc/hosts'
+    echo "127.0.0.1 $registry_name" | sudo tee -a /etc/hosts
 
     # Exporting the registry location for subsequent jobs
     echo "KIND_REGISTRY=${registry_name}:${registry_port}" >> $GITHUB_ENV
