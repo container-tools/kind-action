@@ -29,6 +29,24 @@ jobs:
           kubectl cluster-info
           kubectl get storageclass standard
 
+  test-with-custom-resource-limits:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Create kind cluster with custom resource limits
+        uses: ./
+        with:
+          cpu: "3"
+          disk: "5"
+          memory: "11"
+      - name: Test
+        run: |
+          kubectl get node $(kubectl get node -o custom-columns=":metadata.name") -o custom-columns="CPU:.status.capacity.cpu" | grep "3" 1> /dev/null && echo "CPU OK"
+          kubectl get node $(kubectl get node -o custom-columns=":metadata.name") -o custom-columns="DISK:.status.capacity.ephemeral-storage" | grep -E "5\d{6}Ki" 1> /dev/null && echo "Disk OK"
+          kubectl get node $(kubectl get node -o custom-columns=":metadata.name") -o custom-columns="MEMORY:.status.capacity.memory" | grep -E "11\d{6}Ki" 1> /dev/null && echo "Memory OK"
+
   test-with-custom-name:
     strategy:
       matrix:

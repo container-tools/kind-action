@@ -27,6 +27,12 @@ inputs:
     description: "The version of Knative Net Kourier to install on the Kind cluster (not installed by default - example: v1.0.0)"
   knative_eventing:
     description: "The version of Knative Eventing to install on the Kind cluster (not installed by default - example: v1.0.0)"
+  cpu:
+    description: "For Mac OS only: Number of CPUs to be allocated to the virtual machine (default: 2)"
+  memory:
+    description: "For Mac OS only: Size of the memory in GiB to be allocated to the virtual machine (default: 12)"
+  disk:
+    description: "For Mac OS only: Size of the disk in GiB to be allocated to the virtual machine (default: 60)"
 runs:
   using: "node16"
   main: "main.js"
