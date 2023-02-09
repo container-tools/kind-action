@@ -21,6 +21,7 @@ SCRIPT_DIR=$(dirname -- "$(readlink -f "${BASH_SOURCE[0]}" || realpath "${BASH_S
 main() {
     args_kind=()
     args_knative=()
+    args_registry=()
 
     if [[ -n "${INPUT_VERSION:-}" ]]; then
         args_kind+=(--version "${INPUT_VERSION}")
@@ -62,9 +63,21 @@ main() {
         args_knative+=(--knative-eventing "${INPUT_KNATIVE_EVENTING}")
     fi
 
+    if [[ -n "${INPUT_CPU:-}" ]]; then
+        args_registry+=(--cpu "${INPUT_CPU}")
+    fi
+
+    if [[ -n "${INPUT_DISK:-}" ]]; then
+        args_registry+=(--disk "${INPUT_DISK}")
+    fi
+
+    if [[ -n "${INPUT_MEMORY:-}" ]]; then
+        args_registry+=(--memory "${INPUT_MEMORY}")
+    fi
+
     if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "$(echo ${INPUT_REGISTRY} | tr '[:upper:]' '[:lower:]')" = "true" ]]; then
-        if [[ ${args:+exist} == "exist" ]] && [[ ${#args[@]} -gt 0 ]]; then
-            "$SCRIPT_DIR/registry.sh" "${args[@]}"
+        if [[ ${#args_registry[@]} -gt 0 ]]; then
+            "$SCRIPT_DIR/registry.sh" "${args_registry[@]}"
         else
             "$SCRIPT_DIR/registry.sh"
         fi
@@ -83,8 +96,8 @@ main() {
     fi
 
     if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "$(echo ${INPUT_REGISTRY} | tr '[:upper:]' '[:lower:]')" = "true" ]]; then
-        if [[ ${args:+exist} == "exist" ]] && [[ ${#args[@]} -gt 0 ]]; then
-            "$SCRIPT_DIR/registry.sh" "--document" "true" "${args[@]}"
+        if [[ ${#args_registry[@]} -gt 0 ]]; then
+            "$SCRIPT_DIR/registry.sh" "--document" "true" "${args_registry[@]}"
         else
             "$SCRIPT_DIR/registry.sh" "--document" "true"
         fi

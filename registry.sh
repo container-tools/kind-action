@@ -20,15 +20,21 @@ DEFAULT_REGISTRY_IMAGE=registry:2
 DEFAULT_REGISTRY_NAME=kind-registry
 DEFAULT_REGISTRY_PORT=5000
 DEFAULT_CLUSTER_NAME=kind
+DEFAULT_CPU=2
+DEFAULT_MEMORY=12
+DEFAULT_DISK=60
 
 show_help() {
 cat << EOF
 Usage: $(basename "$0") <options>
 
     -h, --help                              Display help
-        --registry-image                    The registry image to use (default: registry:2)
-        --registry-name                     The registry name to use
-        --registry-port                     The local port used to bind the registry
+        --cpu                               Number of CPUs to be allocated to the virtual machine (default: $DEFAULT_CPU). For Mac OS only
+        --disk                              Size of the disk in GiB to be allocated to the virtual machine (default: $DEFAULT_DISK). For Mac OS only
+        --memory                            Size of the memory in GiB to be allocated to the virtual machine (default: $DEFAULT_MEMORY). For Mac OS only
+        --registry-image                    The registry image to use (default: $DEFAULT_REGISTRY_IMAGE)
+        --registry-name                     The registry name to use (default: $DEFAULT_REGISTRY_NAME)
+        --registry-port                     The local port used to bind the registry (default: $DEFAULT_REGISTRY_PORT)
         -n, --cluster-name                  The name of the cluster to create (default: $DEFAULT_CLUSTER_NAME)"
         --document                          Document the local registry
 
@@ -40,6 +46,9 @@ main() {
     local registry_name="$DEFAULT_REGISTRY_NAME"
     local registry_port="$DEFAULT_REGISTRY_PORT"
     local cluster_name="$DEFAULT_CLUSTER_NAME"
+    local cpu="$DEFAULT_CPU"
+    local disk="$DEFAULT_DISK"
+    local memory="$DEFAULT_MEMORY"
     local document=false
 
     parse_command_line "$@"
@@ -62,6 +71,36 @@ parse_command_line() {
             -h|--help)
                 show_help
                 exit
+                ;;
+            --cpu)
+                if [[ -n "${2:-}" ]]; then
+                    cpu="$2"
+                    shift
+                else
+                    echo "ERROR: '--cpu' cannot be empty." >&2
+                    show_help
+                    exit 1
+                fi
+                ;;
+            --disk)
+                if [[ -n "${2:-}" ]]; then
+                    disk="$2"
+                    shift
+                else
+                    echo "ERROR: '--disk' cannot be empty." >&2
+                    show_help
+                    exit 1
+                fi
+                ;;
+            --memory)
+                if [[ -n "${2:-}" ]]; then
+                    memory="$2"
+                    shift
+                else
+                    echo "ERROR: '--memory' cannot be empty." >&2
+                    show_help
+                    exit 1
+                fi
                 ;;
             --registry-image)
                 if [[ -n "${2:-}" ]]; then
@@ -126,7 +165,7 @@ install_docker() {
     if [ "$RUNNER_OS" == "macOS" ] && ! [ -x "$(command -v docker)" ]; then
         echo 'Installing docker...'
         brew install docker colima
-        colima start
+        colima start --cpu "$cpu" --memory "$memory" --disk "$disk"
     fi
 }
 

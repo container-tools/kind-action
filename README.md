@@ -28,6 +28,9 @@ For more information on inputs, see the [API Documentation](https://developer.gi
 - `knative_serving`: The version of Knative Serving to install on the Kind cluster (not installed by default - example: `v1.0.0`)
 - `knative_kourier`: The version of Knative Net Kourier to install on the Kind cluster (not installed by default - example: `v1.0.0`)
 - `knative_eventing`: The version of Knative Eventing to install on the Kind cluster (not installed by default - example: `v1.0.0`)
+- `cpu`: Number of CPUs to be allocated to the virtual machine (default: 2). For Mac OS only.
+- `memory`: Size of the memory in GiB to be allocated to the virtual machine (default: 12). For Mac OS only.
+- `disk`: Size of the disk in GiB to be allocated to the virtual machine (default: 60). For Mac OS only.
 
 ### Example Workflow
 
