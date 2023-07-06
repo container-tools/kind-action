@@ -35,6 +35,7 @@ Usage: $(basename "$0") <options>
         --registry-image                    The registry image to use (default: $DEFAULT_REGISTRY_IMAGE)
         --registry-name                     The registry name to use (default: $DEFAULT_REGISTRY_NAME)
         --registry-port                     The local port used to bind the registry (default: $DEFAULT_REGISTRY_PORT)
+        --registry-delete                   Enable delete operations on the registry (default is false)
         -n, --cluster-name                  The name of the cluster to create (default: $DEFAULT_CLUSTER_NAME)"
         --document                          Document the local registry
 
@@ -45,6 +46,7 @@ main() {
     local registry_image="$DEFAULT_REGISTRY_IMAGE"
     local registry_name="$DEFAULT_REGISTRY_NAME"
     local registry_port="$DEFAULT_REGISTRY_PORT"
+    local registry_delete="false"
     local cluster_name="$DEFAULT_CLUSTER_NAME"
     local cpu="$DEFAULT_CPU"
     local disk="$DEFAULT_DISK"
@@ -132,6 +134,16 @@ parse_command_line() {
                     exit 1
                 fi
                 ;;
+            --registry-delete)
+                if [[ -n "${2:-}" ]]; then
+                    registry_delete="$2"
+                    shift
+                else
+                    echo "ERROR: '--registry-delete' cannot be empty." >&2
+                    show_help
+                    exit 1
+                fi
+                ;;
             -n|--cluster-name)
                 if [[ -n "${2:-}" ]]; then
                     cluster_name="$2"
@@ -170,9 +182,10 @@ install_docker() {
 }
 
 create_registry() {
-    echo "Creating registry \"$registry_name\" on port $registry_port from image \"$registry_image\"..."
-    docker run -d --restart=always -p "${registry_port}:5000" --name "${registry_name}" $registry_image > /dev/null
-    
+    echo "Creating registry \"$registry_name\" on port $registry_port from image \"$registry_image\" with delete enabled $registry_delete ..."
+    docker run -d --restart=always -p "${registry_port}:5000" -e "REGISTRY_STORAGE_DELETE_ENABLED=${registry_delete}" --name "${registry_name}" $registry_image
+> /dev/null
+
     # Adding registry to /etc/hosts
     echo "127.0.0.1 $registry_name" | sudo tee -a /etc/hosts
 

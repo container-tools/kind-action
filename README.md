@@ -24,6 +24,7 @@ For more information on inputs, see the [API Documentation](https://developer.gi
 - `wait`: The duration to wait for the control plane to become ready (default: `60s`)
 - `log_level`: The log level for KinD
 - `registry`: Configures an insecure registry on `kind-registry:5000` to be used with KinD (default: `true`)
+- `registry_delete`: Set to true to enable delete operations on the Image Registry (default is `false`)
 - `kubectl_version`: The kubectl version to use (default: `v1.26.1`)
 - `knative_serving`: The version of Knative Serving to install on the Kind cluster (not installed by default - example: `v1.0.0`)
 - `knative_kourier`: The version of Knative Net Kourier to install on the Kind cluster (not installed by default - example: `v1.0.0`)
