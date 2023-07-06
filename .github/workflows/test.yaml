@@ -148,6 +148,44 @@ jobs:
             exit 1
           fi
 
+  test-with-registry-with-delete-rights:
+    strategy:
+      matrix:
+        version:
+          - v0.17.0
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Create kind cluster with registry
+        uses: ./
+        with:
+          version: "${{ matrix.version }}"
+          registry_delete: true
+
+      - name: Test
+        run: |
+          kubectl cluster-info
+          kubectl get storageclass standard
+
+          # Checking env variable
+          if [[ "$KIND_REGISTRY" != "kind-registry:5000" ]]; then
+            echo "Wrong KIND_REGISTRY env variable: $KIND_REGISTRY"
+            exit 1
+          fi
+
+          # Test registry usage inside cluster
+          docker pull busybox
+          docker tag busybox kind-registry:5000/localbusybox
+
+          # Test delete API
+          OUTPUT=$(docker push kind-registry:5000/localbusybox | grep -o 'digest.*size')
+          TRIM=${OUTPUT//digest: /}
+          DIGEST=${TRIM// size/}
+          exit $(curl -X DELETE kind-registry:5000/v2/localbusybox/manifests/$DIGEST)
+
   test-knative:
     strategy:
       matrix:

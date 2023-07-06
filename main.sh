@@ -75,6 +75,11 @@ main() {
         args_registry+=(--memory "${INPUT_MEMORY}")
     fi
 
+    if [[ -n "${INPUT_REGISTRY_DELETE:-}" ]]; then
+        args_registry+=(--registry-delete "${INPUT_REGISTRY_DELETE}")
+    fi
+
+
     if [[ -z "${INPUT_REGISTRY:-}" ]] || [[ "$(echo ${INPUT_REGISTRY} | tr '[:upper:]' '[:lower:]')" = "true" ]]; then
         if [[ ${#args_registry[@]} -gt 0 ]]; then
             "$SCRIPT_DIR/registry.sh" "${args_registry[@]}"

@@ -19,6 +19,8 @@ inputs:
     description: "The log level for KinD"
   registry:
     description: "Configures an insecure registry on kind-registry:5000 to be used with KinD (default: true)"
+  registry_delete:
+    description: "Enables delete operations on the Image Registry (default is false)"
   kubectl_version:
     description: "The version of kubectl to use (default: v1.26.1)"
   knative_serving:
