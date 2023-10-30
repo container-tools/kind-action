@@ -224,6 +224,7 @@ metadata:
 data:
   localRegistryHosting.v1: |
     host: "${registry_name}:${registry_port}"
+    hostFromClusterNetwork: "${registry_name}:${registry_port}"
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
 }
