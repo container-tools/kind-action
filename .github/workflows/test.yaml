@@ -8,14 +8,20 @@ on:
     branches:
       - main
   schedule:
-  - cron: "0 7 * * *"
+  - cron: "0 5 * * *"
+  workflow_dispatch:
+    inputs:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
 
 jobs:
 
   test-default:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, macos-11]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -107,7 +113,7 @@ jobs:
       matrix:
         version:
         - v0.17.0
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, macos-11]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout

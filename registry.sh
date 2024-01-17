@@ -54,7 +54,7 @@ main() {
     local document=false
 
     parse_command_line "$@"
-    
+
     if [[ "$document" = "false" ]]
     then
         install_docker
@@ -201,7 +201,7 @@ connect_registry() {
 
 create_kind_config() {
     sudo mkdir -p /etc/kind-registry
-    cat <<EOF | sudo dd status=none of=/etc/kind-registry/config.yaml
+    cat <<EOF | sudo dd of=/etc/kind-registry/config.yaml
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:
