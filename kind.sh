@@ -173,7 +173,9 @@ install_kubectl() {
 install_docker() {
     if [ "$RUNNER_OS" == "macOS" ] && ! [ -x "$(command -v docker)" ]; then
         echo 'Installing docker...'
-        brew install docker colima
+        brew install docker docker-buildx colima
+        mkdir -p ~/.docker/cli-plugins
+        ln -sfn /usr/local/opt/docker-buildx/bin/docker-buildx ~/.docker/cli-plugins/docker-buildx
         colima start
     fi
 }

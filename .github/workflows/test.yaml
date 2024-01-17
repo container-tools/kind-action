@@ -8,7 +8,13 @@ on:
     branches:
       - main
   schedule:
-  - cron: "0 7 * * *"
+  - cron: "0 5 * * *"
+  workflow_dispatch:
+    inputs:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
 
 jobs:
 

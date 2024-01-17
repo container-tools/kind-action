@@ -54,7 +54,7 @@ main() {
     local document=false
 
     parse_command_line "$@"
-    
+
     if [[ "$document" = "false" ]]
     then
         install_docker
@@ -176,8 +176,10 @@ parse_command_line() {
 install_docker() {
     if [ "$RUNNER_OS" == "macOS" ] && ! [ -x "$(command -v docker)" ]; then
         echo 'Installing docker...'
-        brew install docker colima
-        colima start --cpu "$cpu" --memory "$memory" --disk "$disk"
+        brew install docker docker-buildx colima
+        mkdir -p ~/.docker/cli-plugins
+        ln -sfn /usr/local/opt/docker-buildx/bin/docker-buildx ~/.docker/cli-plugins/docker-buildx
+        colima start
     fi
 }
 
@@ -201,7 +203,7 @@ connect_registry() {
 
 create_kind_config() {
     sudo mkdir -p /etc/kind-registry
-    cat <<EOF | sudo dd status=none of=/etc/kind-registry/config.yaml
+    cat <<EOF | sudo dd of=/etc/kind-registry/config.yaml
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:
