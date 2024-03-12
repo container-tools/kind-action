@@ -36,6 +36,6 @@ inputs:
   disk:
     description: "For Mac OS only: Size of the disk in GiB to be allocated to the virtual machine (default: 60)"
 runs:
-  using: "node16"
+  using: "node20"
   main: "main.js"
   post: "cleanup.js"
