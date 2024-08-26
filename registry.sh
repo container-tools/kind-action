@@ -179,7 +179,7 @@ install_docker() {
         brew install docker docker-buildx colima
         mkdir -p ~/.docker/cli-plugins
         ln -sfn /usr/local/opt/docker-buildx/bin/docker-buildx ~/.docker/cli-plugins/docker-buildx
-        colima start
+        colima start --cpu "$cpu" --memory "$memory" --disk "$disk"
     fi
 }
 
