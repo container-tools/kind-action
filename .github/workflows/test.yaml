@@ -21,7 +21,7 @@ jobs:
   test-default:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-13]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -36,7 +36,7 @@ jobs:
           kubectl get storageclass standard
 
   test-with-custom-resource-limits:
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -59,7 +59,7 @@ jobs:
         version:
         - v0.17.0
         - v0.16.0
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-13]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -82,7 +82,7 @@ jobs:
         version:
         - v0.17.0
         - v0.16.0
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-13]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -113,7 +113,7 @@ jobs:
       matrix:
         version:
         - v0.17.0
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-13]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -159,7 +159,7 @@ jobs:
       matrix:
         version:
           - v0.17.0
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-13]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -197,7 +197,7 @@ jobs:
       matrix:
         knative_version:
         - v1.9.0
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-13]
     runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout
