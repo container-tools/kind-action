@@ -135,10 +135,15 @@ jobs:
             exit 1
           fi
 
+          TEST_REGISTRY="kind-registry:5000"
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            TEST_REGISTRY="127.0.0.1:5000"
+          fi
+
           # Test registry usage inside cluster
           docker pull busybox
-          docker tag busybox kind-registry:5000/localbusybox
-          docker push kind-registry:5000/localbusybox
+          docker tag busybox $TEST_REGISTRY/localbusybox
+          docker push $TEST_REGISTRY/localbusybox
 
           kubectl create job test --image=kind-registry:5000/localbusybox
           i=1
@@ -182,12 +187,17 @@ jobs:
             exit 1
           fi
 
+          TEST_REGISTRY="kind-registry:5000"
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            TEST_REGISTRY="127.0.0.1:5000"
+          fi
+
           # Test registry usage inside cluster
           docker pull busybox
-          docker tag busybox kind-registry:5000/localbusybox
+          docker tag busybox $TEST_REGISTRY/localbusybox
 
           # Test delete API
-          OUTPUT=$(docker push kind-registry:5000/localbusybox | grep -o 'digest.*size')
+          OUTPUT=$(docker push $TEST_REGISTRY/localbusybox | grep -o 'digest.*size')
           TRIM=${OUTPUT//digest: /}
           DIGEST=${TRIM// size/}
           exit $(curl -X DELETE kind-registry:5000/v2/localbusybox/manifests/$DIGEST)
