@@ -17,7 +17,7 @@ For more information, reference the GitHub Help Documentation for [Creating a wo
 
 For more information on inputs, see the [API Documentation](https://developer.github.com/v3/repos/releases/#input)
 
-- `version`: The KinD version to use (default: `v0.17.0`)
+- `version`: The KinD version to use (default: `v0.23.0`)
 - `config`: The path to the KinD config file
 - `node_image`: The Docker image for the cluster nodes
 - `cluster_name`: The name of the cluster to create (default: `kind`)
@@ -25,7 +25,7 @@ For more information on inputs, see the [API Documentation](https://developer.gi
 - `log_level`: The log level for KinD
 - `registry`: Configures an insecure registry on `kind-registry:5000` to be used with KinD (default: `true`)
 - `registry_delete`: Set to true to enable delete operations on the Image Registry (default is `false`)
-- `kubectl_version`: The kubectl version to use (default: `v1.26.1`)
+- `kubectl_version`: The kubectl version to use (default: `v1.30.4`)
 - `knative_serving`: The version of Knative Serving to install on the Kind cluster (not installed by default - example: `v1.0.0`)
 - `knative_kourier`: The version of Knative Net Kourier to install on the Kind cluster (not installed by default - example: `v1.0.0`)
 - `knative_eventing`: The version of Knative Eventing to install on the Kind cluster (not installed by default - example: `v1.0.0`)
