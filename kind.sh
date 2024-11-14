@@ -163,7 +163,7 @@ install_kubectl() {
         # for M1 / ARM Macs
         [ $(uname -m) = arm64 ] && curl -sSLo kubectl "https://dl.k8s.io/release/$kubectl_version/bin/darwin/arm64/kubectl"
     else
-        curl -sSLO "https://storage.googleapis.com/kubernetes-release/release/$kubectl_version/bin/linux/amd64/kubectl"
+        curl -sSLO "https://dl.k8s.io/release/$kubectl_version/bin/linux/amd64/kubectl"
     fi
     chmod +x kubectl
     sudo mv kubectl /usr/local/bin/kubectl
